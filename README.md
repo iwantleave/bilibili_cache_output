@@ -1,4 +1,4 @@
-# bilibili_cache_output
+# bilibili_cache_output Bilibili缓存视频合并
 bilibili的缓存视频，单独视频文件video.m4s与音频文件audio.m4s，这个python代码调用ffmpeg，把视频与音频文件合成一个mp4文件。
 
 简单合并功能：选择bilibli的缓存文件夹，合并视频文件。
