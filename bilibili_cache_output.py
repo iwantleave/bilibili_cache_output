@@ -41,7 +41,7 @@ def mergeFile():
     print("cmd=",cmd)
     os.system(cmd)
 
-def mergeFile1():
+def SimpleMergeFile():
     print("开始简单合并")
     print("tmppath=",tmppath.get())
 
@@ -58,8 +58,8 @@ def mergeFile1():
     print("type_tag=", type_tag, "bvid=", bvid, "owner_id=", owner_id);
 
     # 获取文件路径
-    videoFilename1 = tmppath.get()+"/1/" + type_tag +"/video.m4s"
-    audioFilename1 = tmppath.get()+"/1/" + type_tag +"/audio.m4s"
+    inputVideoFilename = tmppath.get()+"/1/" + type_tag +"/video.m4s"
+    inputAudioFilename = tmppath.get()+"/1/" + type_tag +"/audio.m4s"
 
 
     # 处理不合适的字符
@@ -73,19 +73,19 @@ def mergeFile1():
 
     # 检查参数
     errormessage = "";
-    if len(videoFilename1) == 0:
+    if len(inputVideoFilename) == 0:
         print("错误，视频为空！")
         showwarning("错误", "视频为空")
         return
-    if not os.path.isfile(videoFilename1):
+    if not os.path.isfile(inputVideoFilename):
         print("错误，视频文件不存在！")
         showwarning("错误", "视频文件不存在")
         return
-    if len(audioFilename1) == 0:
+    if len(inputAudioFilename) == 0:
         print("错误，音频为空！")
         showwarning("错误", "音频为空")
         return
-    if not os.path.isfile(audioFilename1):
+    if not os.path.isfile(inputAudioFilename):
         print("错误，音频文件不存在！")
         showwarning("错误", "音频文件不存在")
         return
@@ -103,7 +103,7 @@ def mergeFile1():
         showwarning("错误", "输出视频文件已存在")
         return
 
-    cmd = "ffmpeg.exe -report -i " + videoFilename1 + " -i " + audioFilename1 + " -c copy " + outputFileName
+    cmd = "ffmpeg.exe -report -i " + inputVideoFilename + " -i " + inputAudioFilename + " -c copy " + outputFileName
     print("cmd=",cmd)
     if os.system(cmd) == 0:
         print("合并完成！")
@@ -112,6 +112,8 @@ def mergeFile1():
         print("合并失败！")
         showerror(title="失败", message="合并失败！")
 
+def startApp ():
+    pass
 
 
 if __name__ == '__main__':
@@ -121,6 +123,7 @@ if __name__ == '__main__':
     savepath = tk.StringVar()
     tmppath = tk.StringVar()
 
+    root.title('B站工具')
 
     # 选择存储的目录
     tk.Label(root, text='选择缓存的目录').grid(row=1, column=0, padx=5, pady=5)
@@ -128,7 +131,7 @@ if __name__ == '__main__':
     tk.Button(root, text='选择', command=tmpPath).grid(row=1, column=2, padx=5, pady=5)
 
     # 合并按钮
-    tk.Button(root, text='简单合并', command=mergeFile1).grid(row=2, column=1, padx=5, pady=5)
+    tk.Button(root, text='简单合并', command=SimpleMergeFile).grid(row=2, column=1, padx=5, pady=5)
 
     # 构建“选择文件”这一行的标签、输入框以及启动按钮，同时我们希望当用户选择图片之后能够显示原图的基本信息
     tk.Label(root, text='选择视频文件').grid(row=3, column=0, padx=5, pady=5)
@@ -147,6 +150,4 @@ if __name__ == '__main__':
     # 合并按钮
     tk.Button(root, text='高级合并', command=mergeFile).grid(row=6, column=1, padx=5, pady=5)
 
-
-
-    root.mainloop()
+    root.mainloop();
