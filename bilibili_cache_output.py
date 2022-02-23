@@ -1,4 +1,3 @@
-import re
 import tkinter as tk
 from tkinter.filedialog import *
 from tkinter.messagebox import *
@@ -6,67 +5,67 @@ from tkinter.messagebox import *
 import os
 import json
 
+
 def getVideoFilename():
     filepath = askopenfilename()  # 选择打开什么文件，返回文件名
     videoFilename.set(filepath)  # 设置变量filename的值
-    print("videoFilename=",filepath)
+    print("videoFilename=", filepath)
 
 
 def getAudioFilename():
     filepath = askopenfilename()  # 选择目录，返回目录名
     audioFilename.set(filepath)  # 设置变量outputpath的值
-    print("audioFilename=",filepath)
-
+    print("audioFilename=", filepath)
 
 
 def fileSave():
     outputFilePath = askdirectory()  # 选择目录，返回目录名
     savepath.set(outputFilePath)  # 设置变量outputpath的值
-    print("savepath=",outputFilePath)
+    print("savepath=", outputFilePath)
 
 
 def tmpPath():
     tmpPath = askdirectory()  # 选择目录，返回目录名
     tmppath.set(tmpPath)  # 设置变量outputpath的值
-    print("tmppath=",tmpPath)
+    print("tmppath=", tmpPath)
+
 
 def mergeFile():
     print("开始合并选择文件")
     print(videoFilename.get())
 
-    videoFilename1=videoFilename.get().replace("/","//")
+    videoFilename1 = videoFilename.get().replace("/", "//")
     audioFilename1 = audioFilename.get().replace("/", "//")
     savepath1 = savepath.get().replace("/", "//")
     cmd = "ffmpeg.exe -report -i " + videoFilename1 + " -i " + audioFilename1 + " -c copy " + savepath1 + "/output.mp4"
-    print("cmd=",cmd)
+    print("cmd=", cmd)
     os.system(cmd)
+
 
 def SimpleMergeFile():
     print("开始简单合并")
-    print("tmppath=",tmppath.get())
-
+    print("tmppath=", tmppath.get())
 
     savepath1 = "D:/bilibili/"
-    jsonPath=tmppath.get()+"/1/entry.json"
-    print("jsonPath=",jsonPath)
-    entryJson = json.load(open(jsonPath,'r',encoding='utf-8'))
+    jsonPath = tmppath.get() + "/1/entry.json"
+    print("jsonPath=", jsonPath)
+    entryJson = json.load(open(jsonPath, 'r', encoding='utf-8'))
     print("entryJson=", entryJson)
-    title = entryJson['title'].strip().replace(" ",'_')
+    title = entryJson['title'].strip().replace(" ", '_')
     type_tag = entryJson['type_tag'].strip()
     bvid = entryJson['bvid'].strip()
     owner_id = str(entryJson['owner_id'])
     print("type_tag=", type_tag, "bvid=", bvid, "owner_id=", owner_id);
 
     # 获取文件路径
-    inputVideoFilename = tmppath.get()+"/1/" + type_tag +"/video.m4s"
-    inputAudioFilename = tmppath.get()+"/1/" + type_tag +"/audio.m4s"
-
+    inputVideoFilename = tmppath.get() + "/1/" + type_tag + "/video.m4s"
+    inputAudioFilename = tmppath.get() + "/1/" + type_tag + "/audio.m4s"
 
     # 处理不合适的字符
     rstr = r"[\/\\\:\*\?\"\<\>\|&]"  # '/ \ : * ? " < > | &'
     title = re.sub(rstr, "_", title)
 
-    print("title",title)
+    print("title", title)
 
     # 输出文件格式 文件名_bvid_ownerid.mp4
     outputFileName = savepath1 + title + "_" + bvid + "_" + owner_id + ".mp4"
@@ -104,15 +103,16 @@ def SimpleMergeFile():
         return
 
     cmd = "ffmpeg.exe -report -i " + inputVideoFilename + " -i " + inputAudioFilename + " -c copy " + outputFileName
-    print("cmd=",cmd)
+    print("cmd=", cmd)
     if os.system(cmd) == 0:
         print("合并完成！")
-        showinfo(title="成功", message="合并完成！"+outputFileName)
+        showinfo(title="成功", message="合并完成！" + outputFileName)
     else:
         print("合并失败！")
         showerror(title="失败", message="合并失败！")
 
-def startApp ():
+
+def startApp():
     pass
 
 
@@ -124,6 +124,9 @@ if __name__ == '__main__':
     tmppath = tk.StringVar()
 
     root.title('B站工具')
+    root.geometry('500x400')
+
+    # tk.Button(root, text='1', command=tmpPath).grid(row=0, column=0, padx=5, pady=5)
 
     # 选择存储的目录
     tk.Label(root, text='选择缓存的目录').grid(row=1, column=0, padx=5, pady=5)
