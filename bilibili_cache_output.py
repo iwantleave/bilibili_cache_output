@@ -1,3 +1,4 @@
+import re
 import tkinter as tk
 from tkinter.filedialog import *
 from tkinter.messagebox import *
@@ -42,12 +43,8 @@ def mergeFile():
     os.system(cmd)
 
 
-def SimpleMergeFile():
-    print("开始简单合并")
-    print("tmppath=", tmppath.get())
-
-    savepath1 = "D:/bilibili/"
-    jsonPath = tmppath.get() + "/1/entry.json"
+def doJob(mergePath, savepath,jobCnt, totalFileCnt):
+    jsonPath = mergePath + "/entry.json"
     print("jsonPath=", jsonPath)
     entryJson = json.load(open(jsonPath, 'r', encoding='utf-8'))
     print("entryJson=", entryJson)
@@ -58,8 +55,8 @@ def SimpleMergeFile():
     print("type_tag=", type_tag, "bvid=", bvid, "owner_id=", owner_id);
 
     # 获取文件路径
-    inputVideoFilename = tmppath.get() + "/1/" + type_tag + "/video.m4s"
-    inputAudioFilename = tmppath.get() + "/1/" + type_tag + "/audio.m4s"
+    inputVideoFilename = mergePath + "/" + type_tag + "/video.m4s"
+    inputAudioFilename = mergePath + "/" + type_tag + "/audio.m4s"
 
     # 处理不合适的字符
     rstr = r"[\/\\\:\*\?\"\<\>\|&]"  # '/ \ : * ? " < > | &'
@@ -68,7 +65,10 @@ def SimpleMergeFile():
     print("title", title)
 
     # 输出文件格式 文件名_bvid_ownerid.mp4
-    outputFileName = savepath1 + title + "_" + bvid + "_" + owner_id + ".mp4"
+    if totalFileCnt==1:
+        outputFileName = savepath + title + "_" + bvid + "_" + owner_id + ".mp4"
+    elif totalFileCnt>1:
+        outputFileName = savepath + title + "_" + bvid + "_" + owner_id + "_" + str(jobCnt) + ".mp4"
 
     # 检查参数
     errormessage = "";
@@ -89,11 +89,11 @@ def SimpleMergeFile():
         showwarning("错误", "音频文件不存在")
         return
 
-    if len(savepath1) == 0:
+    if len(savepath) == 0:
         print("错误，保存路径为空！")
         showwarning("错误", "保存路径为空")
         return
-    if not os.path.exists(savepath1):
+    if not os.path.exists(savepath):
         print("错误，保存路径不存在！")
         showwarning("错误", "保存路径不存在")
         return
@@ -110,6 +110,24 @@ def SimpleMergeFile():
     else:
         print("合并失败！")
         showerror(title="失败", message="合并失败！")
+
+
+def SimpleMergeFile():
+    print("开始简单合并")
+    print("tmppath=", tmppath.get())
+
+    savePath = "D:/bilibili/"
+    tmppathList = os.listdir(tmppath.get())
+    totalFileCnt = len(tmppathList)
+    jobCnt = 0
+    for i in tmppathList:
+        mergePath=tmppath.get()+"/"+i
+        print("处理路径"+mergePath)
+        jobCnt=jobCnt+1
+        doJob(mergePath, savePath,jobCnt, totalFileCnt)
+
+
+
 
 
 def startApp():
