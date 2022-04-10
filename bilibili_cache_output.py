@@ -25,10 +25,11 @@ def fileSave():
     print("savepath=", outputFilePath)
 
 
-def tmpPath():
-    tmpPath = askdirectory()  # 选择目录，返回目录名
-    tmppath.set(tmpPath)  # 设置变量outputpath的值
-    print("tmppath=", tmpPath)
+def getVideoPath():
+    selectedPath = askdirectory(initialdir=tmppath.get())  # 选择目录，返回目录名
+    print("selectedPath=", selectedPath)
+    if(len(selectedPath)>0):
+        tmppath.set(selectedPath)  # 设置变量outputpath的值
 
 
 def mergeFile():
@@ -52,7 +53,7 @@ def doJob(mergePath, savepath,jobCnt, totalFileCnt):
     type_tag = entryJson['type_tag'].strip()
     bvid = entryJson['bvid'].strip()
     owner_id = str(entryJson['owner_id'])
-    print("type_tag=", type_tag, "bvid=", bvid, "owner_id=", owner_id);
+    print("type_tag=", type_tag, "bvid=", bvid, "owner_id=", owner_id)
 
     # 获取文件路径
     inputVideoFilename = mergePath + "/" + type_tag + "/video.m4s"
@@ -65,13 +66,14 @@ def doJob(mergePath, savepath,jobCnt, totalFileCnt):
     print("title", title)
 
     # 输出文件格式 文件名_bvid_ownerid.mp4
+    outputFileName=""
     if totalFileCnt==1:
         outputFileName = savepath + title + "_" + bvid + "_" + owner_id + ".mp4"
     elif totalFileCnt>1:
         outputFileName = savepath + title + "_" + bvid + "_" + owner_id + "_" + str(jobCnt) + ".mp4"
 
     # 检查参数
-    errormessage = "";
+    errormessage = ""
     if len(inputVideoFilename) == 0:
         print("错误，视频为空！")
         showwarning("错误", "视频为空")
@@ -136,6 +138,7 @@ def startApp():
 
 if __name__ == '__main__':
     root = tk.Tk()
+    videoPath="D:/bilibli"
     videoFilename = tk.StringVar()
     audioFilename = tk.StringVar()
     savepath = tk.StringVar()
@@ -144,12 +147,12 @@ if __name__ == '__main__':
     root.title('B站工具')
     root.geometry('500x400')
 
-    # tk.Button(root, text='1', command=tmpPath).grid(row=0, column=0, padx=5, pady=5)
+    tmppath.set(videoPath)
 
     # 选择存储的目录
     tk.Label(root, text='选择缓存的目录').grid(row=1, column=0, padx=5, pady=5)
     tk.Entry(root, textvariable=tmppath).grid(row=1, column=1, padx=5, pady=5)
-    tk.Button(root, text='选择', command=tmpPath).grid(row=1, column=2, padx=5, pady=5)
+    tk.Button(root, text='选择', command=getVideoPath).grid(row=1, column=2, padx=5, pady=5)
 
     # 合并按钮
     tk.Button(root, text='简单合并', command=SimpleMergeFile).grid(row=2, column=1, padx=5, pady=5)
@@ -171,4 +174,6 @@ if __name__ == '__main__':
     # 合并按钮
     tk.Button(root, text='高级合并', command=mergeFile).grid(row=6, column=1, padx=5, pady=5)
 
-    root.mainloop();
+    tk.Text(root, height=10).grid(row=7, column=0, columnspan=24,padx=5, pady=5)
+
+    root.mainloop()
