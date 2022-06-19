@@ -62,6 +62,8 @@ def doJob(mergePath, savepath,jobCnt, totalFileCnt):
     # 处理不合适的字符
     rstr = r"[\/\\\:\*\?\"\<\>\|&]"  # '/ \ : * ? " < > | &'
     title = re.sub(rstr, "_", title)
+    title = title.replace("《", "_").replace("》", "_").replace("【", "_").replace("】", "_") \
+        .replace("__","_").strip("_") #去掉书名号《》【】
 
     print("title", title)
 
