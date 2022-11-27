@@ -143,7 +143,7 @@ def doJob(mergePath, savepath,jobCnt, totalFileCnt, isCheck):
     print("cmd=", cmd)
     if os.system(cmd) == 0:
         print("合并完成！" + outputFileName)
-        #showinfo(title="成功", message="合并完成！" + outputFileName)
+        showinfo(title="成功", message="合并完成！" + outputFileName)
     else:
         print("合并失败！")
         showerror(title="失败", message="合并失败！")
