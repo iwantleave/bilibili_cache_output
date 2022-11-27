@@ -5,6 +5,7 @@ from tkinter.messagebox import *
 
 import os
 import json
+import glob
 
 
 def getVideoFilename():
@@ -31,6 +32,36 @@ def getVideoPath():
     if(len(selectedPath)>0):
         tmppath.set(selectedPath)  # 设置变量outputpath的值
 
+def getBatchVideoPath():
+    selectedPath = askdirectory(initialdir=tmpBatchPath.get())  # 选择目录，返回目录名
+    print("selectedPath=", selectedPath)
+    if(len(selectedPath)>0):
+        tmpBatchPath.set(selectedPath)  # 设置变量outputpath的值
+    doBatchMerge(selectedPath, isCheck=True)
+
+
+
+def doBatchMerge(path , isCheck):
+    print('path=',path)
+    pathList = []
+    for i in glob.glob(path+'/*'):
+        print('path=', i)
+        SimpleMergeFile(path=i, isCheck=isCheck)
+
+def SimpleMergeFile(path, isCheck):
+    print("开始简单合并")
+    #print("tmppath=", tmppath.get())
+
+    savePath = "D:/bilibili/"
+    tmppathList = os.listdir(path)
+    totalFileCnt = len(tmppathList)
+    jobCnt = 0
+    for i in tmppathList:
+        mergePath = path+"/"+i
+        print("处理路径"+mergePath)
+        jobCnt=jobCnt+1
+        doJob(mergePath, savePath,jobCnt, totalFileCnt, isCheck=isCheck)
+
 
 def mergeFile():
     print("开始合并选择文件")
@@ -44,7 +75,7 @@ def mergeFile():
     os.system(cmd)
 
 
-def doJob(mergePath, savepath,jobCnt, totalFileCnt):
+def doJob(mergePath, savepath,jobCnt, totalFileCnt, isCheck):
     jsonPath = mergePath + "/entry.json"
     print("jsonPath=", jsonPath)
     entryJson = json.load(open(jsonPath, 'r', encoding='utf-8'))
@@ -116,19 +147,7 @@ def doJob(mergePath, savepath,jobCnt, totalFileCnt):
         showerror(title="失败", message="合并失败！")
 
 
-def SimpleMergeFile():
-    print("开始简单合并")
-    print("tmppath=", tmppath.get())
 
-    savePath = "D:/bilibili/"
-    tmppathList = os.listdir(tmppath.get())
-    totalFileCnt = len(tmppathList)
-    jobCnt = 0
-    for i in tmppathList:
-        mergePath=tmppath.get()+"/"+i
-        print("处理路径"+mergePath)
-        jobCnt=jobCnt+1
-        doJob(mergePath, savePath,jobCnt, totalFileCnt)
 
 
 
@@ -145,6 +164,8 @@ if __name__ == '__main__':
     audioFilename = tk.StringVar()
     savepath = tk.StringVar()
     tmppath = tk.StringVar()
+    tmpBatchPath = tk.StringVar()
+    batchPathList = []
 
     root.title('B站工具')
     root.geometry('500x400')
@@ -176,6 +197,18 @@ if __name__ == '__main__':
     # 合并按钮
     tk.Button(root, text='高级合并', command=mergeFile).grid(row=6, column=1, padx=5, pady=5)
 
-    tk.Text(root, height=10).grid(row=7, column=0, columnspan=24,padx=5, pady=5)
+    # 一键选择
+    # 选择存储的目录
+    frm = tk.LabelFrame(root, text='批量选择')
+    frm.grid(row=7, column=0, columnspan=5)
+
+    tk.Label(frm, text='批量选择').grid(row=0, column=0, padx=5, pady=5)
+    tk.Entry(frm, textvariable=tmpBatchPath).grid(row=0, column=1, padx=5, pady=5)
+    tk.Button(frm, text='选择', command=getBatchVideoPath).grid(row=0, column=2, padx=5, pady=5)
+    tk.Button(frm, text='开始批量合并', command=doBatchMerge).grid(row=1, column=1, padx=5, pady=5)
+
+
+    tk.Text(root, width=50, height=5).grid(row=8, column=0, columnspan= 3, padx=5, pady=5)
+
 
     root.mainloop()
