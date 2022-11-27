@@ -6,6 +6,7 @@ from tkinter.messagebox import *
 import os
 import json
 import glob
+import datetime
 
 
 def getVideoFilename():
@@ -84,7 +85,8 @@ def doJob(mergePath, savepath,jobCnt, totalFileCnt, isCheck):
     type_tag = entryJson['type_tag'].strip()
     bvid = entryJson['bvid'].strip()
     owner_id = str(entryJson['owner_id'])
-    print("type_tag=", type_tag, "bvid=", bvid, "owner_id=", owner_id)
+    gmt_create = datetime.datetime.fromtimestamp(entryJson['time_create_stamp']/1000).strftime("%Y-%m-%d")
+    print("type_tag=", type_tag, "bvid=", bvid, "owner_id=", owner_id, "gmt_create=", gmt_create)
 
     # 获取文件路径
     inputVideoFilename = mergePath + "/" + type_tag + "/video.m4s"
@@ -101,9 +103,9 @@ def doJob(mergePath, savepath,jobCnt, totalFileCnt, isCheck):
     # 输出文件格式 文件名_bvid_ownerid.mp4
     outputFileName=""
     if totalFileCnt==1:
-        outputFileName = savepath + title + "_" + bvid + "_" + owner_id + ".mp4"
+        outputFileName = savepath + title + "." + bvid + "." + owner_id + "." +gmt_create + ".mp4"
     elif totalFileCnt>1:
-        outputFileName = savepath + title + "_" + bvid + "_" + owner_id + "_" + str(jobCnt) + ".mp4"
+        outputFileName = savepath + title + "." + bvid + "." + owner_id + "." + str(jobCnt) + "." +gmt_create + ".mp4"
 
     # 检查参数
     errormessage = ""
@@ -140,8 +142,8 @@ def doJob(mergePath, savepath,jobCnt, totalFileCnt, isCheck):
     cmd = "ffmpeg.exe -report -i " + inputVideoFilename + " -i " + inputAudioFilename + " -c copy " + outputFileName
     print("cmd=", cmd)
     if os.system(cmd) == 0:
-        print("合并完成！")
-        showinfo(title="成功", message="合并完成！" + outputFileName)
+        print("合并完成！" + outputFileName)
+        #showinfo(title="成功", message="合并完成！" + outputFileName)
     else:
         print("合并失败！")
         showerror(title="失败", message="合并失败！")
